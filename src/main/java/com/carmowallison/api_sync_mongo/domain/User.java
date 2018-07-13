@@ -6,7 +6,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.carmowallison.api_sync_mongo.domain.enums.Perfil;
+import com.carmowallison.api_sync_mongo.domain.sync.Sync;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,10 +23,14 @@ public class User implements Serializable {
 	private String id;
 	private String name;
 	private String email;
+    private Integer action;
 
 	@JsonIgnore
 	private String senha;
 	private boolean active;
+
+    @DBRef(lazy = true)
+	private Sync sync;
 
 	private Set<Integer> perfis = new HashSet<>();
 
@@ -93,7 +100,23 @@ public class User implements Serializable {
 		this.perfis = perfis;
 	}
 
-	@Override
+    public Sync getSync() {
+        return sync;
+    }
+
+    public void setSync(Sync sync) {
+        this.sync = sync;
+    }
+
+    public Integer getAction() {
+        return action;
+    }
+
+    public void setAction(Integer action) {
+        this.action = action;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

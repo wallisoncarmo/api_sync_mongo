@@ -1,8 +1,10 @@
-package com.carmowallison.api_sync_mongo.domain.sync;
+package com.carmowallison.api_sync_mongo.dto;
 
 import com.carmowallison.api_sync_mongo.domain.User;
 import com.carmowallison.api_sync_mongo.domain.enums.Action;
 import com.carmowallison.api_sync_mongo.domain.enums.Table;
+import com.carmowallison.api_sync_mongo.domain.sync.Log;
+import com.carmowallison.api_sync_mongo.domain.sync.Sync;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,31 +14,29 @@ import java.util.Date;
 import java.util.Objects;
 
 @Document
-public class Log implements Serializable {
+public class LogDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
     private String id;
-    private Integer table;
-    private Integer action;
+    private String table;
+    private String action;
     private String description;
-    @DBRef
-    private Sync sync;
+    private String sync;
     private User user;
     private Date current;
 
 
-    public Log() {
+    public LogDTO() {
     }
 
-    public Log(String id, Integer table, Integer action, String description, Sync sync, User user) {
-        this.id = id;
-        this.table = table;
-        this.action = action;
-        this.description = description;
-        this.sync = sync;
-        this.user = user;
+    public LogDTO(Log obj) {
+        this.id = obj.getId();
+        this.table = obj.getTable().getDescricao();
+        this.action = obj.getAction().getTitulo();
+        this.description = obj.getDescription();
+        this.sync = obj.getSync().getId();
+        this.user = obj.getUser();
         this.current = new Date();
     }
 
@@ -48,19 +48,19 @@ public class Log implements Serializable {
         this.id = id;
     }
 
-    public Table getTable() {
-        return Table.toEnum(table);
+    public String getTable() {
+        return table;
     }
 
-    public void setTable(Integer table) {
+    public void setTable(String table) {
         this.table = table;
     }
 
-    public Action getAction() {
-        return Action.toEnum(action);
+    public String getAction() {
+        return action;
     }
 
-    public void setAction(Integer action) {
+    public void setAction(String action) {
         this.action = action;
     }
 
@@ -72,11 +72,11 @@ public class Log implements Serializable {
         this.description = description;
     }
 
-    public Sync getSync() {
+    public String getSync() {
         return sync;
     }
 
-    public void setSync(Sync sync) {
+    public void setSync(String sync) {
         this.sync = sync;
     }
 
@@ -100,7 +100,7 @@ public class Log implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Log log = (Log) o;
+        LogDTO log = (LogDTO) o;
         return Objects.equals(id, log.id);
     }
 

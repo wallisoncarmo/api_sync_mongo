@@ -3,6 +3,7 @@ package com.carmowallison.api_sync_mongo.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.carmowallison.api_sync_mongo.domain.sync.Sync;
 import com.carmowallison.api_sync_mongo.dto.UserDTO;
 import com.carmowallison.api_sync_mongo.dto.UserNewDTO;
 import com.carmowallison.api_sync_mongo.repositoties.UserRepository;
@@ -24,6 +25,10 @@ public class UserService {
 
 	public List<User> findAll() {
 		return repository.findAll();
+	}
+
+	public List<User> findAllBySync(List<Sync> list){
+		return  repository.findBySyncIn(list);
 	}
 
 	public User findById(String id) {
