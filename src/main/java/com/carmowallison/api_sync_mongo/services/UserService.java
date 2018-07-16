@@ -57,7 +57,9 @@ public class UserService {
         User newObj = findById(obj.getId());
         updateData(newObj, obj);
         newObj.setAction(Action.UPDATE.getCod());
-        return repository.save(newObj);
+
+        User retorno = repository.save(newObj);
+        return retorno;
 
     }
 
@@ -73,6 +75,10 @@ public class UserService {
         }
         if (obj.getSenha() != null) {
             newObj.setSenha(bc.encode(obj.getSenha()));
+        }
+
+        if (obj.getSync() != null) {
+            newObj.setSync(obj.getSync());
         }
 
     }

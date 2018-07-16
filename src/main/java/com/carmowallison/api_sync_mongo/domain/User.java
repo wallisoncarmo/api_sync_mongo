@@ -29,7 +29,7 @@ public class User implements Serializable {
 	private String senha;
 	private boolean active;
 
-    @DBRef(lazy = true)
+    @DBRef
 	private Sync sync;
 
 	private Set<Integer> perfis = new HashSet<>();

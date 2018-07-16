@@ -10,7 +10,6 @@ import com.carmowallison.api_sync_mongo.dto.LogDTO;
 import com.carmowallison.api_sync_mongo.dto.SyncDTO;
 import com.carmowallison.api_sync_mongo.dto.TableDTO;
 import com.carmowallison.api_sync_mongo.dto.UserDTO;
-import com.carmowallison.api_sync_mongo.repositoties.LogRepository;
 import com.carmowallison.api_sync_mongo.repositoties.SyncRepository;
 import com.carmowallison.api_sync_mongo.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +153,7 @@ public class SyncService {
 
                 user.setAction(Action.ADD.getCod());
                 if (current != null) {
+                    user.setId(current.getId());
                     user.setAction(Action.UPDATE.getCod());
                 }
 
@@ -170,6 +170,7 @@ public class SyncService {
 
                 user.setAction(Action.ADD.getCod());
                 if (current != null) {
+                    user.setId(current.getId());
                     user.setAction(Action.UPDATE.getCod());
                 }
                 user.setSync(sync);
@@ -186,6 +187,7 @@ public class SyncService {
 
                 user.setAction(Action.ADD.getCod());
                 if (current != null) {
+                    user.setId(current.getId());
                     user.setAction(Action.DELETE.getCod());
                 }
                 user.setSync(sync);
@@ -210,7 +212,6 @@ public class SyncService {
                 userService.insert(obj);
                 break;
             case 2:
-
                 description = Action.UPDATE.getDescricao().concat(" #" + obj.getName());
                 obj = userService.update(obj);
                 break;

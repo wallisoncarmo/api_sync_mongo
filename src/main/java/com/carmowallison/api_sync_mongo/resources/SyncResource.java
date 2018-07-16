@@ -49,8 +49,8 @@ public class SyncResource {
     }
 
 
-    @ApiOperation(value = "insere um novo User")
-    @RequestMapping(value = "/data",method = RequestMethod.POST)
+    @ApiOperation(value = "Gera um novo syncro")
+    @RequestMapping(value = "/data", method = RequestMethod.POST)
     public ResponseEntity<SyncDTO> insertDataSync(@RequestBody SyncDTO objDTO) {
         SyncDTO obj = service.insertDataSync(objDTO);
         return ResponseEntity.ok().body(obj);
