@@ -147,8 +147,82 @@ public class SyncService {
         String id = obj.getId();
         Sync sync = insert(new Sync(null, obj.getUser()));
 
+        if (obj.getAdd() != null) {
+            obj.getAdd().getUsers().parallelStream().forEach(userDTO -> {
+                User current = userService.findByEmail(userDTO.getEmail());
+                User user = userService.fromDTO(userDTO);
+
+                user.setAction(Action.ADD.getCod());
+                if (current != null) {
+                    user.setAction(Action.UPDATE.getCod());
+                }
+
+                user.setSync(sync);
+                updateDataUser(user);
+
+            });
+        }
+
+        if (obj.getUpdate() != null) {
+            obj.getUpdate().getUsers().parallelStream().forEach(userDTO -> {
+                User current = userService.findById(userDTO.getId());
+                User user = userService.fromDTO(userDTO);
+
+                user.setAction(Action.ADD.getCod());
+                if (current != null) {
+                    user.setAction(Action.UPDATE.getCod());
+                }
+                user.setSync(sync);
+                updateDataUser(user);
+
+            });
+        }
+
+        if (obj.getDelete() != null) {
+
+            obj.getDelete().getUsers().parallelStream().forEach(userDTO -> {
+                User current = userService.findById(userDTO.getId());
+                User user = userService.fromDTO(userDTO);
+
+                user.setAction(Action.ADD.getCod());
+                if (current != null) {
+                    user.setAction(Action.DELETE.getCod());
+                }
+                user.setSync(sync);
+                updateDataUser(user);
+
+            });
+
+        }
 
         return getLastSync(id);
+    }
+
+
+    public User updateDataUser(User obj) {
+
+        Integer code = 0;
+        String description = "";
+
+        switch (obj.getAction()) {
+            case 1:
+                description = Action.ADD.getDescricao().concat(" #" + obj.getName());
+                userService.insert(obj);
+                break;
+            case 2:
+
+                description = Action.UPDATE.getDescricao().concat(" #" + obj.getName());
+                obj = userService.update(obj);
+                break;
+            case 3:
+                description = Action.DELETE.getDescricao().concat(" #" + obj.getName());
+                obj = userService.delete(obj.getId());
+                break;
+        }
+
+        logService.gernerateLog(obj.getAction(), description, obj.getSync(), new User(), obj);
+
+        return obj;
     }
 
 }

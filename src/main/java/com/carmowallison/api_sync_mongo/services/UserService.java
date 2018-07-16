@@ -85,4 +85,7 @@ public class UserService {
         return new User(null, objDTO.getName(), objDTO.getEmail(), objDTO.isActive(), bc.encode(objDTO.getSenha()));
     }
 
+    public User findByEmail(String email) {
+        return repository.findByEmailContaining(email);
+    }
 }

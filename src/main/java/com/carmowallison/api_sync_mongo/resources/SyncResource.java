@@ -47,4 +47,12 @@ public class SyncResource {
     public ResponseEntity<SyncDTO> findBySync(@PathVariable String sync) {
         return ResponseEntity.ok().body(service.getLastSync(sync));
     }
+
+
+    @ApiOperation(value = "insere um novo User")
+    @RequestMapping(value = "/data",method = RequestMethod.POST)
+    public ResponseEntity<SyncDTO> insertDataSync(@RequestBody SyncDTO objDTO) {
+        SyncDTO obj = service.insertDataSync(objDTO);
+        return ResponseEntity.ok().body(obj);
+    }
 }
