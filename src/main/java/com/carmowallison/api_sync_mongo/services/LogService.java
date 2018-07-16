@@ -1,8 +1,11 @@
 package com.carmowallison.api_sync_mongo.services;
 
 
+import com.carmowallison.api_sync_mongo.domain.User;
+import com.carmowallison.api_sync_mongo.domain.enums.Table;
 import com.carmowallison.api_sync_mongo.domain.sync.Log;
 import com.carmowallison.api_sync_mongo.domain.sync.Sync;
+import com.carmowallison.api_sync_mongo.dto.UserDTO;
 import com.carmowallison.api_sync_mongo.repositoties.LogRepository;
 import com.carmowallison.api_sync_mongo.repositoties.SyncRepository;
 import com.carmowallison.api_sync_mongo.services.exceptions.ObjectNotFoundException;
@@ -58,17 +61,23 @@ public class LogService {
             newObj.setSync(obj.getSync());
         }
         if (obj.getAction() != null) {
-            newObj.setAction(obj.getAction().getCod());
+            newObj.setAction(obj.getAction());
         }
         if (obj.getDescription() != null) {
             newObj.setDescription(obj.getDescription());
         }
         if (obj.getTable() != null) {
-            newObj.setTable(obj.getTable().getCod());
+            newObj.setTable(obj.getTable());
         }
         if (obj.getUser() != null) {
             newObj.setUser(obj.getUser());
         }
+    }
+
+
+    public void gernerateLog(Integer code, String description, Sync sync, User userLogging, Object obj) {
+        Log log = new Log(null, Table.USER.getCod(), code, description, sync, new UserDTO(userLogging), obj);
+        insert(log);
     }
 
 

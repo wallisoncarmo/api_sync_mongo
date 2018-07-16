@@ -11,17 +11,17 @@ public class TableDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<User> users = new ArrayList<>();
+	private List<UserDTO> users = new ArrayList<>();
 	private List<Produto> produtos = new ArrayList<>();
 
 	public TableDTO() {
 	}
 
-	public List<User> getUsers() {
+	public List<UserDTO> getUsers() {
 		return users;
 	}
 
-	public void setUsers(List<User> users) {
+	public void setUsers(List<UserDTO> users) {
 		this.users = users;
 	}
 

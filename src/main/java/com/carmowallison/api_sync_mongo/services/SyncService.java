@@ -9,6 +9,7 @@ import com.carmowallison.api_sync_mongo.domain.sync.Sync;
 import com.carmowallison.api_sync_mongo.dto.LogDTO;
 import com.carmowallison.api_sync_mongo.dto.SyncDTO;
 import com.carmowallison.api_sync_mongo.dto.TableDTO;
+import com.carmowallison.api_sync_mongo.dto.UserDTO;
 import com.carmowallison.api_sync_mongo.repositoties.LogRepository;
 import com.carmowallison.api_sync_mongo.repositoties.SyncRepository;
 import com.carmowallison.api_sync_mongo.services.exceptions.ObjectNotFoundException;
@@ -47,69 +48,6 @@ public class SyncService {
         return new SyncDTO(sync, logService.findAllBySync(list));
     }
 
-    public SyncDTO getLastSync(String id) {
-
-        Sync syncCurrent = this.findById(id);
-
-        List<Sync> list = repo.findByCurrentGreaterThanOrderByCurrentAsc(syncCurrent.getCurrent());
-        SyncDTO sync = new SyncDTO();
-
-        if (list.isEmpty()) {
-            return null;
-        }
-
-        sync.setId(list.get(list.size() - 1).getId());
-        sync.setSync(list.get(list.size() - 1).getSync());
-
-        List<User> users = userService.findAllBySync(list);
-
-        sync.setAdd(new TableDTO());
-        sync.setUpdate(new TableDTO());
-        sync.setDelete(new TableDTO());
-
-        users.parallelStream().forEach(obj -> {
-            switch (obj.getAction()) {
-                case 1:
-                    sync.getAdd().getUsers().add(obj);
-                    break;
-                case 2:
-                    sync.getUpdate().getUsers().add(obj);
-                    break;
-                case 3:
-                    sync.getDelete().getUsers().add(obj);
-                    break;
-                default:
-                    break;
-            }
-
-        });
-
-        List<Produto> produtos = produtoService.findAllBySync(list);
-        produtos.parallelStream().forEach(obj -> {
-            switch (obj.getAction()) {
-                case 1:
-                    sync.getAdd().getProdutos().add(obj);
-                    break;
-                case 2:
-                    sync.getUpdate().getProdutos().add(obj);
-                    break;
-                case 3:
-                    sync.getDelete().getProdutos().add(obj);
-                    break;
-                default:
-                    break;
-            }
-
-        });
-
-        List<Log> logs= logService.findAllBySync(list);
-
-        List<LogDTO> listDTO = logs.stream().map(obj -> new LogDTO(obj)).collect(Collectors.toList());
-
-        sync.setLogs(listDTO);
-        return sync;
-    }
-
     public Sync insert(Sync obj) {
         obj.setId(null);
         return repo.save(obj);
@@ -138,25 +76,79 @@ public class SyncService {
     }
 
     private void updateData(Sync newObj, Sync obj) {
-        if (!obj.getSync().equals("")) {
-            newObj.setSync(obj.getSync());
-        }
-        if (obj.getAdd() != null) {
-            newObj.setAdd(obj.getAdd());
-        }
-        if (obj.getUpdate() != null) {
-            newObj.setUpdate(obj.getUpdate());
-        }
-        if (obj.getDelete() != null) {
-            newObj.setDelete(obj.getDelete());
-        }
         if (obj.getUser() != null) {
             newObj.setUser(obj.getUser());
         }
     }
 
+    public SyncDTO getLastSync(String id) {
 
-    private void mergeTable() {
+        Sync syncCurrent = this.findById(id);
 
+        List<Sync> list = repo.findByCurrentGreaterThanOrderByCurrentAsc(syncCurrent.getCurrent());
+        SyncDTO sync = new SyncDTO();
+
+        if (list.isEmpty()) {
+            return null;
+        }
+
+        sync.setId(list.get(list.size() - 1).getId());
+
+        List<User> users = userService.findAllBySync(list);
+
+        sync.setAdd(new TableDTO());
+        sync.setUpdate(new TableDTO());
+        sync.setDelete(new TableDTO());
+
+        users.parallelStream().forEach(obj -> {
+            switch (obj.getAction()) {
+                case 1:
+                    sync.getAdd().getUsers().add(new UserDTO(obj));
+                    break;
+                case 2:
+                    sync.getUpdate().getUsers().add(new UserDTO(obj));
+                    break;
+                case 3:
+                    sync.getDelete().getUsers().add(new UserDTO(obj));
+                    break;
+                default:
+                    break;
+            }
+
+        });
+
+        List<Produto> produtos = produtoService.findAllBySync(list);
+        produtos.parallelStream().forEach(obj -> {
+            switch (obj.getAction()) {
+                case 1:
+                    sync.getAdd().getProdutos().add(obj);
+                    break;
+                case 2:
+                    sync.getUpdate().getProdutos().add(obj);
+                    break;
+                case 3:
+                    sync.getDelete().getProdutos().add(obj);
+                    break;
+                default:
+                    break;
+            }
+
+        });
+
+        List<Log> logs = logService.findAllBySync(list);
+
+        List<LogDTO> listDTO = logs.stream().map(obj -> new LogDTO(obj)).collect(Collectors.toList());
+
+        sync.setLogs(listDTO);
+        return sync;
     }
+
+    public SyncDTO insertDataSync(SyncDTO obj) {
+        String id = obj.getId();
+        Sync sync = insert(new Sync(null, obj.getUser()));
+
+
+        return getLastSync(id);
+    }
+
 }

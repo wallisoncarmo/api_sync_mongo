@@ -3,9 +3,6 @@ package com.carmowallison.api_sync_mongo.dto;
 import com.carmowallison.api_sync_mongo.domain.User;
 import com.carmowallison.api_sync_mongo.domain.sync.Log;
 import com.carmowallison.api_sync_mongo.domain.sync.Sync;
-import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.NotEmpty;
 
 import org.springframework.data.annotation.Id;
 
@@ -19,9 +16,6 @@ public class SyncDTO implements Serializable {
 
     @Id
     private String id;
-    @NotEmpty(message = "Preenchimento Obrigatório!")
-    @Length(min = 5, max = 255, message = "O tamanho precisa ser de 5 a 255 caracter!")
-    private Integer sync;
     private TableDTO add;
     private TableDTO update;
     private TableDTO delete;
@@ -34,18 +28,10 @@ public class SyncDTO implements Serializable {
 
     public SyncDTO(Sync obj) {
         id = obj.getId();
-        sync = obj.getSync();
-        add = obj.getAdd();
-        update = obj.getUpdate();
-        delete = obj.getDelete();
     }
 
     public SyncDTO(Sync obj, List<Log> logs) {
         id = obj.getId();
-        sync = obj.getSync();
-        add = obj.getAdd();
-        update = obj.getUpdate();
-        delete = obj.getDelete();
         logs = logs;
     }
 
@@ -56,14 +42,6 @@ public class SyncDTO implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public Integer getSync() {
-        return sync;
-    }
-
-    public void setSync(Integer sync) {
-        this.sync = sync;
     }
 
     public TableDTO getAdd() {

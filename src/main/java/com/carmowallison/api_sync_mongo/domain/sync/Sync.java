@@ -20,10 +20,6 @@ public class Sync implements Serializable {
 
     @Id
     private String id;
-    private Integer sync;
-    private TableDTO add;
-    private TableDTO update;
-    private TableDTO delete;
     private User user;
     private Date current;
 
@@ -31,12 +27,8 @@ public class Sync implements Serializable {
     public Sync() {
     }
 
-    public Sync(String id, Integer sync, TableDTO add, TableDTO update, TableDTO delete, User user) {
+    public Sync(String id, User user) {
         this.id = id;
-        this.sync = sync;
-        this.add = add;
-        this.update = update;
-        this.delete = delete;
         this.user = user;
         this.current = new Date();
     }
@@ -44,10 +36,6 @@ public class Sync implements Serializable {
     public Sync fromDTO(SyncDTO objDTO) {
         return new Sync(
                 this.id = objDTO.getId(),
-                this.sync = objDTO.getSync(),
-                this.add = objDTO.getAdd(),
-                this.update = objDTO.getUpdate(),
-                this.delete = objDTO.getDelete(),
                 this.user = objDTO.getUser()
         );
     }
@@ -59,38 +47,6 @@ public class Sync implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public Integer getSync() {
-        return sync;
-    }
-
-    public void setSync(Integer sync) {
-        this.sync = sync;
-    }
-
-    public TableDTO getAdd() {
-        return add;
-    }
-
-    public void setAdd(TableDTO add) {
-        this.add = add;
-    }
-
-    public TableDTO getUpdate() {
-        return update;
-    }
-
-    public void setUpdate(TableDTO update) {
-        this.update = update;
-    }
-
-    public TableDTO getDelete() {
-        return delete;
-    }
-
-    public void setDelete(TableDTO delete) {
-        this.delete = delete;
     }
 
     public User getUser() {

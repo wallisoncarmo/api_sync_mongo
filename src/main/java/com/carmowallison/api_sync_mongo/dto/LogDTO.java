@@ -23,7 +23,7 @@ public class LogDTO implements Serializable {
     private String action;
     private String description;
     private String sync;
-    private User user;
+    private UserDTO user;
     private Date current;
 
 
@@ -32,8 +32,8 @@ public class LogDTO implements Serializable {
 
     public LogDTO(Log obj) {
         this.id = obj.getId();
-        this.table = obj.getTable().getDescricao();
-        this.action = obj.getAction().getTitulo();
+        this.table = obj.getDescription();
+        this.action = Action.toEnum(obj.getAction()).getTitulo();
         this.description = obj.getDescription();
         this.sync = obj.getSync().getId();
         this.user = obj.getUser();
@@ -80,11 +80,11 @@ public class LogDTO implements Serializable {
         this.sync = sync;
     }
 
-    public User getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 

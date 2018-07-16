@@ -1,8 +1,7 @@
 package com.carmowallison.api_sync_mongo.domain.sync;
 
 import com.carmowallison.api_sync_mongo.domain.User;
-import com.carmowallison.api_sync_mongo.domain.enums.Action;
-import com.carmowallison.api_sync_mongo.domain.enums.Table;
+import com.carmowallison.api_sync_mongo.dto.UserDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,14 +22,15 @@ public class Log implements Serializable {
     private String description;
     @DBRef
     private Sync sync;
-    private User user;
+    private UserDTO user;
     private Date current;
+    private Object data;
 
 
     public Log() {
     }
 
-    public Log(String id, Integer table, Integer action, String description, Sync sync, User user) {
+    public Log(String id, Integer table, Integer action, String description, Sync sync, UserDTO user, Object data) {
         this.id = id;
         this.table = table;
         this.action = action;
@@ -38,7 +38,9 @@ public class Log implements Serializable {
         this.sync = sync;
         this.user = user;
         this.current = new Date();
+        this.data = data;
     }
+
 
     public String getId() {
         return id;
@@ -48,16 +50,16 @@ public class Log implements Serializable {
         this.id = id;
     }
 
-    public Table getTable() {
-        return Table.toEnum(table);
+    public Integer getTable() {
+        return table;
     }
 
     public void setTable(Integer table) {
         this.table = table;
     }
 
-    public Action getAction() {
-        return Action.toEnum(action);
+    public Integer getAction() {
+        return action;
     }
 
     public void setAction(Integer action) {
@@ -80,11 +82,11 @@ public class Log implements Serializable {
         this.sync = sync;
     }
 
-    public User getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 
@@ -94,6 +96,14 @@ public class Log implements Serializable {
 
     public void setCurrent(Date current) {
         this.current = current;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
     }
 
     @Override

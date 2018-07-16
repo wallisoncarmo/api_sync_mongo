@@ -3,6 +3,9 @@ package com.carmowallison.api_sync_mongo.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.carmowallison.api_sync_mongo.domain.enums.Action;
+import com.carmowallison.api_sync_mongo.domain.enums.Table;
+import com.carmowallison.api_sync_mongo.domain.sync.Log;
 import com.carmowallison.api_sync_mongo.domain.sync.Sync;
 import com.carmowallison.api_sync_mongo.dto.UserDTO;
 import com.carmowallison.api_sync_mongo.dto.UserNewDTO;
@@ -17,62 +20,69 @@ import com.carmowallison.api_sync_mongo.domain.User;
 @Service
 public class UserService {
 
-	@Autowired
-	private UserRepository repository;
+    @Autowired
+    private UserRepository repository;
 
-	@Autowired
-	private BCryptPasswordEncoder bc;
+    @Autowired
+    private BCryptPasswordEncoder bc;
 
-	public List<User> findAll() {
-		return repository.findAll();
-	}
 
-	public List<User> findAllBySync(List<Sync> list){
-		return  repository.findBySyncIn(list);
-	}
+    public List<User> findAll() {
+        return repository.findAll();
+    }
 
-	public User findById(String id) {
-		Optional<User> obj = repository.findById(id);
-		return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
-	}
+    public List<User> findAllBySync(List<Sync> list) {
+        return repository.findBySyncIn(list);
+    }
 
-	public User insert(User obj) {
-		return repository.insert(obj);
-	}
+    public User findById(String id) {
+        Optional<User> obj = repository.findById(id);
+        return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
+    }
 
-	public void delete(String id) {
-		findById(id);
-		repository.deleteById(id);
-	}
+    public User insert(User obj) {
+        obj.setAction(Action.ADD.getCod());
+        return repository.insert(obj);
+    }
 
-	public User update(User obj) {
-		User newObj = findById(obj.getId());
-		updateData(newObj, obj);
+    public User delete(String id) {
+        User obj = findById(id);
+        obj.setAction(Action.DELETE.getCod());
 
-		return repository.save(newObj);
-	}
+        repository.deleteById(id);
+        return obj;
+    }
 
-	private void updateData(User newObj, User obj) {
+    public User update(User obj) {
+        User newObj = findById(obj.getId());
+        updateData(newObj, obj);
+        newObj.setAction(Action.UPDATE.getCod());
+        return repository.save(newObj);
 
-		newObj.setActive(obj.isActive());
+    }
 
-		if (obj.getEmail() != null) {
-			newObj.setEmail(obj.getEmail());
-		}
-		if (obj.getName() != null) {
-			newObj.setName(obj.getName());
-		}
-		if (obj.getSenha() != null) {
-			newObj.setSenha(bc.encode(obj.getSenha()));
-		}
+    private void updateData(User newObj, User obj) {
 
-	}
+        newObj.setActive(obj.isActive());
 
-	public User fromDTO(UserDTO objDTO) {
-		return new User(objDTO.getId(), objDTO.getName(), objDTO.getEmail(),objDTO.isActive(), null);
-	}
+        if (obj.getEmail() != null) {
+            newObj.setEmail(obj.getEmail());
+        }
+        if (obj.getName() != null) {
+            newObj.setName(obj.getName());
+        }
+        if (obj.getSenha() != null) {
+            newObj.setSenha(bc.encode(obj.getSenha()));
+        }
 
-	public User fromDTO(UserNewDTO objDTO) {
-		return new User(null, objDTO.getName(), objDTO.getEmail(), objDTO.isActive(),bc.encode(objDTO.getSenha()));
-	}
+    }
+
+    public User fromDTO(UserDTO objDTO) {
+        return new User(objDTO.getId(), objDTO.getName(), objDTO.getEmail(), objDTO.isActive(), null);
+    }
+
+    public User fromDTO(UserNewDTO objDTO) {
+        return new User(null, objDTO.getName(), objDTO.getEmail(), objDTO.isActive(), bc.encode(objDTO.getSenha()));
+    }
+
 }
